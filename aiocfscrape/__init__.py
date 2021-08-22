@@ -126,8 +126,9 @@ class CloudflareScraper(aiohttp.ClientSession):
         domain = parsed_url.netloc
         challenge_form = re.search(r'\<form.*?id=\"challenge-form\".*?\/form\>', body, flags=re.S).group(0)  # find challenge form
         method = re.search(r'method=\"(.*?)\"', challenge_form, flags=re.S).group(1)
-        if self.org_method is None:
-            self.org_method = resp.request.method
+        if not hasattr(self, 'org_method'):
+            self.org_method = resp.method
+        
         submit_url = '%s://%s%s' % (parsed_url.scheme, domain,
                                     re.search(r'action=\"(.*?)\"', challenge_form, flags=re.S).group(1).split('?')[0])
 

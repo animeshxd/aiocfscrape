@@ -122,7 +122,7 @@ class CloudflareScraper(aiohttp.ClientSession):
         start_time = time.time()
 
         body = await resp.text()
-        parsed_url = urlparse(resp.url)
+        parsed_url = urlparse(str(resp.url))
         domain = parsed_url.netloc
         challenge_form = re.search(r'\<form.*?id=\"challenge-form\".*?\/form\>', body, flags=re.S).group(0)  # find challenge form
         method = re.search(r'method=\"(.*?)\"', challenge_form, flags=re.S).group(1)
@@ -134,7 +134,7 @@ class CloudflareScraper(aiohttp.ClientSession):
         cloudflare_kwargs = copy.deepcopy(original_kwargs)
 
         headers = cloudflare_kwargs.setdefault('headers', {})
-        headers['Referer'] = resp.url
+        headers['Referer'] = str(resp.url)
 
         try:
             cloudflare_kwargs['params'] = dict()
